@@ -54,7 +54,7 @@ bazel_dep(name = "rules_python", version = "1.6.0")
 # rules_proto is needed for @com_google_protobuf_v25 used in //compatibility/... tests
 bazel_dep(name = "rules_proto", version = "7.1.0")
 
-bazel_dep(name = "rules_rust", version = "0.63.0", dev_dependency = True)
+bazel_dep(name = "rules_rust", version = "0.63.0")
 bazel_dep(name = "rules_ruby", version = "0.17.3", dev_dependency = True)
 
 # Workaround for https://github.com/bazelbuild/bazel-central-registry/issues/4230
@@ -178,7 +178,7 @@ register_toolchains(
     dev_dependency = True,
 )
 
-rust = use_extension("@rules_rust//rust:extensions.bzl", "rust", dev_dependency = True)
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 
 # As of October 2025, our minimum supported Rust version is 1.79. However, we
 # use 1.85.0 here so that we can get some test coverage with edition 2024.
@@ -188,7 +188,7 @@ rust.toolchain(
     versions = ["1.85.0"],
 )
 
-crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate", dev_dependency = True)
+crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
 crate.spec(
     package = "googletest",
     version = ">0.0.0",
@@ -206,7 +206,7 @@ crate.spec(
     version = ">=2",
 )
 crate.from_specs()
-use_repo(crate, crate_index = "crates")
+use_repo(crate, "crates")
 
 # Keep this list minimal; these dependencies will be part of the common `maven` install and could affect end-user projects.
 PROTOBUF_MAVEN_ARTIFACTS = [

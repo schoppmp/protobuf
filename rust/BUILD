@@ -157,7 +157,7 @@ rust_test(
         "--cfg=bzl",
     ],
     deps = [
-        "@crate_index//:googletest",
+        "@crates//:googletest",
     ],
 )
 
@@ -197,7 +197,7 @@ rust_library(
     visibility = [":protobuf_internal"],
     deps = [
         ":protobuf_cpp",
-        "@crate_index//:googletest",
+        "@crates//:googletest",
     ],
 )
 
@@ -262,7 +262,7 @@ config_setting(
     flag_values = {
         ":rust_proto_library_kernel": "upb",
     },
-    visibility = ["//:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 pkg_files(
