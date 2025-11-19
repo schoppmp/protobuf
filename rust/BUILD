@@ -157,7 +157,7 @@ rust_test(
         "--cfg=bzl",
     ],
     deps = [
-        "@crates//:googletest",
+        "@crate_index//:googletest",
     ],
 )
 
@@ -197,7 +197,7 @@ rust_library(
     visibility = [":protobuf_internal"],
     deps = [
         ":protobuf_cpp",
-        "@crates//:googletest",
+        "@crate_index//:googletest",
     ],
 )
 
