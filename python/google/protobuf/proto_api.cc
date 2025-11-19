@@ -1,3 +1,10 @@
+// Protocol Buffers - Google's data interchange format
+// Copyright 2008 Google LLC.  All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
+
 #include "google/protobuf/proto_api.h"
 
 #include <Python.h>
@@ -106,7 +113,8 @@ bool PythonConstMessagePointer::NotChanged() {
   // serialize result may still diff between languages. So parse to
   // another c++ message for compare.
   std::unique_ptr<google::protobuf::Message> parsed_msg(owned_msg_->New());
-  parsed_msg->ParsePartialFromArray(data, static_cast<int>(len));
+  parsed_msg->ParsePartialFromString(
+      absl::string_view(data, static_cast<int>(len)));
   std::string wire_other;
   google::protobuf::io::StringOutputStream stream_other(&wire_other);
   google::protobuf::io::CodedOutputStream output_other(&stream_other);

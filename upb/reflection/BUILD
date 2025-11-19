@@ -5,8 +5,8 @@
 # license that can be found in the LICENSE file or at
 # https://developers.google.com/open-source/licenses/bsd
 
-load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load(
     "//editions:defaults.bzl",
     "compile_edition_defaults",
@@ -143,14 +143,11 @@ cc_library(
     textual_hdrs = [
         "//upb/port:inc",
     ],
-    visibility = [
-        "//upb:__pkg__",
-        "//upb:friends",
-    ],
+    visibility = ["//upb:friends"],
     deps = [
         ":internal",
-        "//upb/mem",
         "//upb/mini_descriptor",
+        "//upb/mini_table",
     ],
 )
 

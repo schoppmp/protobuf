@@ -556,8 +556,8 @@ TEST(GENERATED_MESSAGE_TEST_NAME, CopyConstructorWithArenas) {
   UNITTEST::TestAllTypes message2_stack(*message1);
   TestUtil::ExpectAllFieldsSet(message2_stack);
 
-  std::unique_ptr<UNITTEST::TestAllTypes> message2_heap(
-      new UNITTEST::TestAllTypes(*message1));
+  std::unique_ptr<UNITTEST::TestAllTypes> message2_heap =
+      std::make_unique<UNITTEST::TestAllTypes>(*message1);
   TestUtil::ExpectAllFieldsSet(*message2_heap);
 
   arena.Reset();
@@ -951,7 +951,7 @@ TEST(GENERATED_MESSAGE_TEST_NAME, ParseFromTruncated) {
   const std::string msg = p.SerializeAsString();
   int successful_count = 0;
   for (int i = 0; i <= msg.size(); i++) {
-    if (p.ParseFromArray(msg.c_str(), i)) {
+    if (p.ParseFromString(absl::string_view(msg.c_str(), i))) {
       ++successful_count;
     }
   }

@@ -764,6 +764,50 @@ static int MaybeReleaseOverlappingOneofField(CMessage* cmessage,
   return 0;
 }
 
+int MaybeReleaseOneofBeforeMerge(CMessage* self, const Message& other) {
+  if (!self->composite_fields) {
+    return 0;
+  }
+
+  Message* message = self->message;
+  const Reflection* reflection = message->GetReflection();
+  PyMessageFactory* factory = GetFactoryForMessage(self);
+  std::vector<const FieldDescriptor*> fields_to_release;
+  std::vector<const FieldDescriptor*> nested_message_fields;
+  for (const auto& item : *self->composite_fields) {
+    const FieldDescriptor* descriptor = item.first;
+    if (descriptor->cpp_type() == FieldDescriptor::CPPTYPE_MESSAGE &&
+        // For normal repeated message, MergeFrom will append the messages.
+        // For message map with same keys, it is overwrite
+        !descriptor->is_repeated() &&
+        reflection->HasField(*message, descriptor)) {
+      if (reflection->HasField(other, descriptor)) {
+        nested_message_fields.push_back(descriptor);
+      } else {
+        // Release oneof message if the other message has set a different oneof
+        const OneofDescriptor* oneof = descriptor->containing_oneof();
+        if (oneof && reflection->HasOneof(other, oneof)) {
+          fields_to_release.push_back(descriptor);
+        }
+      }
+    }
+  }
+  for (const FieldDescriptor* field : nested_message_fields) {
+    if (MaybeReleaseOneofBeforeMerge(
+            reinterpret_cast<CMessage*>(
+                self->composite_fields->find(field)->second),
+            reflection->GetMessage(other, field, factory->message_factory)) <
+        0) {
+      return -1;
+    }
+  }
+  for (const FieldDescriptor* field : fields_to_release) {
+    if (InternalReleaseFieldByDescriptor(self, field) < 0) {
+      return -1;
+    }
+  }
+  return 0;
+}
 // After a Merge, visit every sub-message that was read-only, and
 // eventually update their pointer if the Merge operation modified them.
 int FixupMessageAfterMerge(CMessage* self) {
@@ -1146,7 +1190,10 @@ int InitAttributes(CMessage* self, PyObject* args, PyObject* kwargs) {
           if (new_msg == nullptr) {
             return -1;
           }
-          InitWKTOrMerge(descriptor->message_type(), new_msg.get(), next.get());
+          if (InitWKTOrMerge(descriptor->message_type(), new_msg.get(),
+                             next.get()) < 0) {
+            return -1;
+          }
         }
         if (PyErr_Occurred()) {
           // Check to see how PyIter_Next() exited.
@@ -1846,6 +1893,10 @@ PyObject* MergeFrom(CMessage* self, PyObject* arg) {
   }
   AssureWritable(self);
 
+  if (MaybeReleaseOneofBeforeMerge(self, *other_message->message) < 0) {
+    return nullptr;
+  }
+
   self->message->MergeFrom(*other_message->message);
   // Child message might be lazily created before MergeFrom. Make sure they
   // are mutable at this point if child messages are really created.
@@ -2040,11 +2091,11 @@ static PyObject* ListFields(CMessage* self) {
       if (extension_field == nullptr) {
         return nullptr;
       }
-      // With C++ descriptors, the field can always be retrieved, but for
-      // unknown extensions which have not been imported in Python code, there
-      // is no message class and we cannot retrieve the value.
-      // TODO: consider building the class on the fly!
-      if (fields[i]->message_type() != nullptr &&
+      // When using the default descriptor pool, avoid exposing extensions that
+      // happened to be linked in from C++ but not imported via Python.  This is
+      // for consistency with the pure Python implementation.
+      if (fields[i]->file()->pool() == GetDefaultDescriptorPool()->pool &&
+          fields[i]->message_type() != nullptr &&
           message_factory::GetMessageClass(GetFactoryForMessage(self),
                                            fields[i]->message_type()) ==
               nullptr) {

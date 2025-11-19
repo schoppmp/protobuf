@@ -137,6 +137,7 @@ class ImplicitWeakTypeHandler {
   static void Merge(const MessageLite& from, MessageLite* to) {
     to->CheckTypeAndMergeFrom(from);
   }
+  static constexpr bool has_default_instance() { return false; }
 };
 
 }  // namespace internal
@@ -181,10 +182,8 @@ struct WeakRepeatedPtrField {
 
   typedef internal::RepeatedPtrIterator<MessageLite> iterator;
   typedef internal::RepeatedPtrIterator<const MessageLite> const_iterator;
-  typedef internal::RepeatedPtrOverPtrsIterator<MessageLite*, void*>
-      pointer_iterator;
-  typedef internal::RepeatedPtrOverPtrsIterator<const MessageLite* const,
-                                                const void* const>
+  typedef internal::RepeatedPtrOverPtrsIterator<MessageLite> pointer_iterator;
+  typedef internal::RepeatedPtrOverPtrsIterator<const MessageLite>
       const_pointer_iterator;
 
   bool empty() const { return base().empty(); }
