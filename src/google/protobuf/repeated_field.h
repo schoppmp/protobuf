@@ -609,9 +609,15 @@ class ABSL_ATTRIBUTE_WARN_UNUSED PROTOBUF_DECLSPEC_EMPTY_BASES
                  const_iterator last) ABSL_ATTRIBUTE_LIFETIME_BOUND;
 
   // Gets the Arena on which this RepeatedField stores its elements.
-  // Note: this can be inaccurate for split default fields so we make this
-  // function non-const.
   PROTOBUF_FUTURE_ADD_NODISCARD inline Arena* GetArena() {
+    // Note: we make this function non-const to force callers to call the
+    // `mutable_*` accessor on the repeated field before calling `GetArena()`,
+    // which initializes the field if it is split. If this method were const,
+    // then `msg.repeated_field().GetArena()` would be valid, but for split
+    // repeated fields `repeated_field()` could point to the default split
+    // instance. This would always return `nullptr`, which is incorrect when
+    // using arenas.
+
 #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
     return soo_rep_.arena();
 #else
@@ -662,7 +668,7 @@ class ABSL_ATTRIBUTE_WARN_UNUSED PROTOBUF_DECLSPEC_EMPTY_BASES
       internal::SooCapacityElements<Element>();
 
   static constexpr int kInitialSize = 0;
-  static PROTOBUF_CONSTEXPR const size_t kHeapRepHeaderSize = HeapRep::SizeOf();
+  static constexpr const size_t kHeapRepHeaderSize = HeapRep::SizeOf();
 
 #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
   explicit constexpr RepeatedField(internal::InternalMetadataOffset offset);
@@ -1116,16 +1122,7 @@ inline Element* RepeatedField<Element>::AddAlreadyReserved()
 template <typename Element>
 inline Element* RepeatedField<Element>::AddNAlreadyReserved(int n)
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  if (ABSL_PREDICT_FALSE(n < 0)) {
-    // Calling with size 0 ensures that internal check (`n < 0 || n >= 0`)
-    // fails for any negative input.
-    internal::RuntimeAssertInBounds(n, 0);
-  }
-  // n = 0 will fail if it reaches RuntimeAssertInBoundsLE.
-  if (n == 0) {
-    return unsafe_elements(is_soo()) + size(is_soo());
-  }
-
+  internal::RuntimeAssertInBoundsGE(n, 0);
   const bool is_soo = this->is_soo();
   const int old_size = size(is_soo);
   [[maybe_unused]] const int capacity = Capacity(is_soo);

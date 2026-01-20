@@ -77,11 +77,11 @@ std::vector<Sub> Vars(const FieldDescriptor* field, const Options& opts,
 
 class SingularMessage : public FieldGeneratorBase {
  public:
-  SingularMessage(const FieldDescriptor* field, const Options& opts,
-                  MessageSCCAnalyzer* scc)
-      : FieldGeneratorBase(field, opts, scc),
+  SingularMessage(const FieldDescriptor* field, const Options& opts)
+      : FieldGeneratorBase(field, opts),
         opts_(&opts),
-        has_required_(scc->HasRequiredFields(field->message_type())),
+        has_required_(
+            opts.scc_analyzer->HasRequiredFields(field->message_type())),
         has_hasbit_(HasHasbit(field, opts)) {}
 
   ~SingularMessage() override = default;
@@ -156,7 +156,7 @@ void SingularMessage::GenerateAccessorDeclarations(io::Printer* p) const {
       AnnotatedAccessors(field_, {"mutable_"}, AnnotationCollector::kAlias));
 
   p->Emit(R"cc(
-    $DEPRECATED$ const $Submsg$& $name$() const;
+    $DEPRECATED$ [[nodiscard]] const $Submsg$& $name$() const;
     $DEPRECATED$ [[nodiscard]] $Submsg$* $nullable$ $release_name$();
     $DEPRECATED$ $Submsg$* $nonnull$ $mutable_name$();
     $DEPRECATED$ void $set_allocated_name$($Submsg$* $nullable$ value);
@@ -456,9 +456,8 @@ void SingularMessage::GenerateAggregateInitializer(io::Printer* p) const {
 
 class OneofMessage : public SingularMessage {
  public:
-  OneofMessage(const FieldDescriptor* descriptor, const Options& options,
-               MessageSCCAnalyzer* scc_analyzer)
-      : SingularMessage(descriptor, options, scc_analyzer) {
+  OneofMessage(const FieldDescriptor* descriptor, const Options& options)
+      : SingularMessage(descriptor, options) {
     auto* oneof = descriptor->containing_oneof();
     num_message_fields_in_oneof_ = 0;
     for (int i = 0; i < oneof->field_count(); ++i) {
@@ -707,11 +706,11 @@ bool OneofMessage::RequiresArena(GeneratorFunction func) const {
 
 class RepeatedMessage : public FieldGeneratorBase {
  public:
-  RepeatedMessage(const FieldDescriptor* field, const Options& opts,
-                  MessageSCCAnalyzer* scc)
-      : FieldGeneratorBase(field, opts, scc),
+  RepeatedMessage(const FieldDescriptor* field, const Options& opts)
+      : FieldGeneratorBase(field, opts),
         opts_(&opts),
-        has_required_(scc->HasRequiredFields(field->message_type())) {}
+        has_required_(
+            opts.scc_analyzer->HasRequiredFields(field->message_type())) {}
 
   ~RepeatedMessage() override = default;
 
@@ -758,8 +757,9 @@ void RepeatedMessage::GenerateAccessorDeclarations(io::Printer* p) const {
                                            io::AnnotationCollector::kAlias));
 
   p->Emit(R"cc(
-    $DEPRECATED$ $Submsg$* $nonnull$ $mutable_name$(int index);
-    $DEPRECATED$ $pb$::RepeatedPtrField<$Submsg$>* $nonnull$ $mutable_name$();
+    [[nodiscard]] $DEPRECATED$ $Submsg$* $nonnull$ $mutable_name$(int index);
+    [[nodiscard]] $DEPRECATED$ $pb$::RepeatedPtrField<$Submsg$>* $nonnull$
+    $mutable_name$();
 
     private:
     const $pb$::RepeatedPtrField<$Submsg$>& $_internal_name$() const;
@@ -773,9 +773,10 @@ void RepeatedMessage::GenerateAccessorDeclarations(io::Printer* p) const {
   }
   p->Emit(R"cc(
     public:
-    $DEPRECATED$ const $Submsg$& $name$(int index) const;
+    [[nodiscard]] $DEPRECATED$ const $Submsg$& $name$(int index) const;
     $DEPRECATED$ $Submsg$* $nonnull$ $add_name$();
-    $DEPRECATED$ const $pb$::RepeatedPtrField<$Submsg$>& $name$() const;
+    [[nodiscard]] $DEPRECATED$ const $pb$::RepeatedPtrField<$Submsg$>& $name$()
+        const;
   )cc");
 }
 
@@ -1054,21 +1055,18 @@ bool RepeatedMessage::RequiresArena(GeneratorFunction func) const {
 }  // namespace
 
 std::unique_ptr<FieldGeneratorBase> MakeSinguarMessageGenerator(
-    const FieldDescriptor* desc, const Options& options,
-    MessageSCCAnalyzer* scc) {
-  return absl::make_unique<SingularMessage>(desc, options, scc);
+    const FieldDescriptor* desc, const Options& options) {
+  return absl::make_unique<SingularMessage>(desc, options);
 }
 
 std::unique_ptr<FieldGeneratorBase> MakeRepeatedMessageGenerator(
-    const FieldDescriptor* desc, const Options& options,
-    MessageSCCAnalyzer* scc) {
-  return absl::make_unique<RepeatedMessage>(desc, options, scc);
+    const FieldDescriptor* desc, const Options& options) {
+  return absl::make_unique<RepeatedMessage>(desc, options);
 }
 
 std::unique_ptr<FieldGeneratorBase> MakeOneofMessageGenerator(
-    const FieldDescriptor* desc, const Options& options,
-    MessageSCCAnalyzer* scc) {
-  return absl::make_unique<OneofMessage>(desc, options, scc);
+    const FieldDescriptor* desc, const Options& options) {
+  return absl::make_unique<OneofMessage>(desc, options);
 }
 
 }  // namespace cpp

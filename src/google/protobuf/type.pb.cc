@@ -38,7 +38,7 @@ inline constexpr Option::Impl_::Impl_(
         value_{nullptr} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR Option::Option(::_pbi::ConstantInitialized)
+constexpr Option::Option(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(Option_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
@@ -47,7 +47,7 @@ PROTOBUF_CONSTEXPR Option::Option(::_pbi::ConstantInitialized)
       _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
 }
 struct OptionDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR OptionDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  constexpr OptionDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~OptionDefaultTypeInternal() {}
   union {
     Option _instance;
@@ -89,7 +89,7 @@ inline constexpr Field::Impl_::Impl_(
         packed_{false} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR Field::Field(::_pbi::ConstantInitialized)
+constexpr Field::Field(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(Field_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
@@ -98,7 +98,7 @@ PROTOBUF_CONSTEXPR Field::Field(::_pbi::ConstantInitialized)
       _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
 }
 struct FieldDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR FieldDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  constexpr FieldDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~FieldDefaultTypeInternal() {}
   union {
     Field _instance;
@@ -127,7 +127,7 @@ inline constexpr EnumValue::Impl_::Impl_(
         number_{0} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR EnumValue::EnumValue(::_pbi::ConstantInitialized)
+constexpr EnumValue::EnumValue(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(EnumValue_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
@@ -136,7 +136,7 @@ PROTOBUF_CONSTEXPR EnumValue::EnumValue(::_pbi::ConstantInitialized)
       _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
 }
 struct EnumValueDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR EnumValueDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  constexpr EnumValueDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~EnumValueDefaultTypeInternal() {}
   union {
     EnumValue _instance;
@@ -187,7 +187,7 @@ inline constexpr Type::Impl_::Impl_(
         syntax_{static_cast< ::google::protobuf::Syntax >(0)} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR Type::Type(::_pbi::ConstantInitialized)
+constexpr Type::Type(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(Type_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
@@ -196,7 +196,7 @@ PROTOBUF_CONSTEXPR Type::Type(::_pbi::ConstantInitialized)
       _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
 }
 struct TypeDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR TypeDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  constexpr TypeDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~TypeDefaultTypeInternal() {}
   union {
     Type _instance;
@@ -238,7 +238,7 @@ inline constexpr Enum::Impl_::Impl_(
         syntax_{static_cast< ::google::protobuf::Syntax >(0)} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR Enum::Enum(::_pbi::ConstantInitialized)
+constexpr Enum::Enum(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(Enum_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
@@ -247,7 +247,7 @@ PROTOBUF_CONSTEXPR Enum::Enum(::_pbi::ConstantInitialized)
       _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
 }
 struct EnumDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR EnumDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  constexpr EnumDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~EnumDefaultTypeInternal() {}
   union {
     Enum _instance;
@@ -422,19 +422,22 @@ PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_google_2fproto
 };
 namespace google {
 namespace protobuf {
-const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL Field_Kind_descriptor() {
+[[nodiscard]] const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL
+Field_Kind_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_google_2fprotobuf_2ftype_2eproto);
   return file_level_enum_descriptors_google_2fprotobuf_2ftype_2eproto[0];
 }
 PROTOBUF_CONSTINIT const uint32_t Field_Kind_internal_data_[] = {
     1245184u, 0u, };
-const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL Field_Cardinality_descriptor() {
+[[nodiscard]] const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL
+Field_Cardinality_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_google_2fprotobuf_2ftype_2eproto);
   return file_level_enum_descriptors_google_2fprotobuf_2ftype_2eproto[1];
 }
 PROTOBUF_CONSTINIT const uint32_t Field_Cardinality_internal_data_[] = {
     262144u, 0u, };
-const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL Syntax_descriptor() {
+[[nodiscard]] const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL
+Syntax_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_google_2fprotobuf_2ftype_2eproto);
   return file_level_enum_descriptors_google_2fprotobuf_2ftype_2eproto[2];
 }
@@ -623,7 +626,6 @@ constexpr auto Type::InternalGenerateClassData_() {
       ::google::protobuf::internal::ClassData{
           &_Type_default_instance_._instance,
           &_table_.header,
-          nullptr,  // OnDemandRegisterArenaDtor
           nullptr,  // IsInitialized
           &Type::MergeImpl,
           ::google::protobuf::Message::GetNewImpl<Type>(),
@@ -1174,7 +1176,6 @@ constexpr auto Field::InternalGenerateClassData_() {
       ::google::protobuf::internal::ClassData{
           &_Field_default_instance_._instance,
           &_table_.header,
-          nullptr,  // OnDemandRegisterArenaDtor
           nullptr,  // IsInitialized
           &Field::MergeImpl,
           ::google::protobuf::Message::GetNewImpl<Field>(),
@@ -1843,7 +1844,6 @@ constexpr auto Enum::InternalGenerateClassData_() {
       ::google::protobuf::internal::ClassData{
           &_Enum_default_instance_._instance,
           &_table_.header,
-          nullptr,  // OnDemandRegisterArenaDtor
           nullptr,  // IsInitialized
           &Enum::MergeImpl,
           ::google::protobuf::Message::GetNewImpl<Enum>(),
@@ -2340,7 +2340,6 @@ constexpr auto EnumValue::InternalGenerateClassData_() {
       ::google::protobuf::internal::ClassData{
           &_EnumValue_default_instance_._instance,
           &_table_.header,
-          nullptr,  // OnDemandRegisterArenaDtor
           nullptr,  // IsInitialized
           &EnumValue::MergeImpl,
           ::google::protobuf::Message::GetNewImpl<EnumValue>(),
@@ -2700,7 +2699,6 @@ constexpr auto Option::InternalGenerateClassData_() {
       ::google::protobuf::internal::ClassData{
           &_Option_default_instance_._instance,
           &_table_.header,
-          nullptr,  // OnDemandRegisterArenaDtor
           nullptr,  // IsInitialized
           &Option::MergeImpl,
           ::google::protobuf::Message::GetNewImpl<Option>(),

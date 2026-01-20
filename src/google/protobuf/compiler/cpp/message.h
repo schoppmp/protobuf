@@ -43,8 +43,7 @@ class MessageGenerator {
   MessageGenerator(
       const Descriptor* descriptor,
       const absl::flat_hash_map<absl::string_view, std::string>& ignored,
-      int index_in_file_messages, const Options& options,
-      MessageSCCAnalyzer* scc_analyzer);
+      int index_in_file_messages, const Options& options);
 
   MessageGenerator(const MessageGenerator&) = delete;
   MessageGenerator& operator=(const MessageGenerator&) = delete;
@@ -203,7 +202,6 @@ class MessageGenerator {
   bool ShouldGenerateEnclosingIf(const FieldDescriptor& field) const;
 
   size_t HasBitsSize() const;
-  size_t InlinedStringDonatedSize() const;
   absl::flat_hash_map<absl::string_view, std::string> HasBitVars(
       const FieldDescriptor* field) const;
   int HasBitIndex(const FieldDescriptor* field) const;
@@ -243,13 +241,6 @@ class MessageGenerator {
   std::vector<int> has_bit_indices_;
   int max_has_bit_index_ = 0;
 
-  // A map from field index to inlined_string index. For non-inlined-string
-  // fields, the element is -1. If there is no inlined string in the message,
-  // this is empty.
-  std::vector<int> inlined_string_indices_;
-  // The count of inlined_string fields in the message.
-  int max_inlined_string_index_ = 0;
-
   std::vector<const EnumGenerator*> enum_generators_;
   std::vector<const ExtensionGenerator*> extension_generators_;
   int num_required_fields_ = 0;
@@ -257,8 +248,6 @@ class MessageGenerator {
 
   std::unique_ptr<MessageLayoutHelper> message_layout_helper_;
   std::unique_ptr<ParseFunctionGenerator> parse_function_generator_;
-
-  MessageSCCAnalyzer* scc_analyzer_;
 
   absl::flat_hash_map<absl::string_view, std::string> variables_;
 
