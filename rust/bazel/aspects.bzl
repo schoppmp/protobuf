@@ -251,9 +251,9 @@ def _compile_rust(ctx, attr, src, extra_srcs, deps, runtime):
             name = crate_name,
             type = "rlib",
             root = src,
-            srcs = depset([src] + extra_srcs),
-            deps = depset(deps),
-            proc_macro_deps = depset([]),
+            srcs = [src] + extra_srcs,
+            deps = deps,
+            proc_macro_deps = [],
             # Make "protobuf" into an alias for the runtime. This allows the
             # generated code to use a consistent name, even though the actual
             # name of the runtime crate varies depending on the protobuf kernel
