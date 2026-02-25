@@ -80,6 +80,26 @@ pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip", dev_depen
 
 use_repo(pip, "protobuf_pip_deps")
 
+crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
+crate.spec(
+    package = "googletest",
+    version = ">0.0.0",
+)
+crate.spec(
+    package = "paste",
+    version = ">=1",
+)
+crate.spec(
+    package = "quote",
+    version = ">=1",
+)
+crate.spec(
+    package = "syn",
+    version = ">=2",
+)
+crate.from_specs()
+use_repo(crate, crate_index = "crates")
+
 protobuf_maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven", dev_dependency = True)
 protobuf_maven.install(
     name = "protobuf_maven",
