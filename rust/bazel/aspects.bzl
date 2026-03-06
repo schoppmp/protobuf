@@ -199,6 +199,11 @@ def _get_cc_info(providers):
             return provider
     fail("Couldn't find a CcInfo in the list of providers")
 
+def _get_safe_src_name(src):
+    label = src.owner
+    repo_part = label.workspace_name if label.workspace_name else "local"
+    safe_name = "{}_{}_{}".format(repo_part, label.package, label.name).replace("/", "_").replace(":", "_")
+
 def _compile_cc(
         ctx,
         attr,
@@ -222,7 +227,7 @@ def _compile_cc(
     cc_info = cc_common.merge_cc_infos(direct_cc_infos = cc_infos)
 
     (compilation_context, compilation_outputs) = cc_common.compile(
-        name = src.short_path,
+        name = _get_safe_src_name(src),
         actions = ctx.actions,
         feature_configuration = feature_configuration,
         cc_toolchain = cc_toolchain,
@@ -232,7 +237,7 @@ def _compile_cc(
     )
 
     (linking_context, _) = cc_common.create_linking_context_from_compilation_outputs(
-        name = src.short_path,
+        name = _get_safe_src_name(src),
         actions = ctx.actions,
         feature_configuration = feature_configuration,
         cc_toolchain = cc_toolchain,
